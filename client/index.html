@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planning & Télétravail Dashboard</title>
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Config Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1', // Indigo
+                            600: '#4f46e5',
+                            900: '#312e81',
+                        }
+                    },
+                    gridTemplateColumns: {
+                        '7': 'repeat(7, minmax(0, 1fr))',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body
+    class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans h-screen flex overflow-hidden transition-colors duration-300">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col flex-shrink-0 transition-all duration-300" id="sidebar">
+        <div class="p-6 flex items-center gap-3 border-b border-slate-700">
+            <i class="fa-solid fa-calendar-check text-2xl text-brand-500"></i>
+            <h1 class="font-bold text-lg tracking-wide">MyPlanning<span class="text-brand-500">Pro</span></h1>
+        </div>
+
+        <!-- Navigation / Tools -->
+        <nav class="flex-1 overflow-y-auto p-4 space-y-6">
+
+            <!-- Tools Section -->
+            <div>
+                <h3 class="text-xs uppercase text-slate-500 font-bold mb-3 px-2">Outils de Peinture</h3>
+                <div class="space-y-2" id="tools-container">
+                    <!-- Tools will be injected here -->
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div>
+                <h3 class="text-xs uppercase text-slate-500 font-bold mb-3 px-2">Statistiques (Année)</h3>
+                <div class="space-y-3 px-2" id="stats-container">
+                    <!-- Stats will be injected here -->
+                </div>
+            </div>
+
+        </nav>
+
+        <!-- User / Settings -->
+        <div class="p-4 bg-slate-800 border-t border-slate-700">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center font-bold">U</div>
+                <div class="text-sm">
+                    <p class="font-medium">Utilisateur</p>
+                    <p class="text-xs text-slate-400">Pro Version</p>
+                </div>
+            </div>
+            <button id="btn-settings"
+                class="w-full text-xs bg-slate-700 hover:bg-slate-600 py-2 rounded text-slate-300 transition-colors">
+                <i class="fa-solid fa-cog mr-1"></i> Paramètres & API
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-slate-800 transition-colors duration-300">
+
+        <!-- Header -->
+        <header
+            class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 h-16 flex items-center justify-between px-6 shadow-sm z-20 transition-colors duration-300">
+            <div class="flex items-center gap-4">
+                <button id="btn-prev-month"
+                    class="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-chevron-left text-slate-600 dark:text-slate-400"></i>
+                </button>
+                <h2 id="current-month-display"
+                    class="text-xl font-bold text-slate-800 dark:text-white capitalize min-w-[200px] text-center">
+                    Chargement...
+                </h2>
+                <button id="btn-next-month"
+                    class="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-chevron-right text-slate-600 dark:text-slate-400"></i>
+                </button>
+                <button id="btn-today"
+                    class="text-sm font-medium text-brand-600 hover:text-brand-900 dark:text-brand-400 dark:hover:text-brand-300 px-3 py-1 rounded hover:bg-brand-50 dark:hover:bg-slate-800 transition-colors">
+                    Aujourd'hui
+                </button>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button id="btn-theme-toggle"
+                    class="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors text-slate-500 dark:text-slate-400"
+                    title="Changer de thème">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <div class="h-6 w-px bg-slate-300 dark:bg-slate-600 mx-1"></div>
+                <button id="btn-ai-assist"
+                    class="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:shadow-lg hover:scale-105 transition-all text-sm font-medium">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Assistant IA
+                </button>
+                <div class="h-6 w-px bg-slate-300 dark:bg-slate-600 mx-1"></div>
+                <button id="btn-export"
+                    class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 p-2"
+                    title="Exporter .ics">
+                    <i class="fa-solid fa-download"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Calendar Grid -->
+        <div class="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-800 relative transition-colors duration-300">
+
+            <!-- Weekday Headers -->
+            <div class="grid grid-cols-7 mb-2 text-center">
+                <div class="text-sm font-semibold text-slate-400 py-2">Lundi</div>
+                <div class="text-sm font-semibold text-slate-400 py-2">Mardi</div>
+                <div class="text-sm font-semibold text-slate-400 py-2">Mercredi</div>
+                <div class="text-sm font-semibold text-slate-400 py-2">Jeudi</div>
+                <div class="text-sm font-semibold text-slate-400 py-2">Vendredi</div>
+                <div class="text-sm font-semibold text-red-400 py-2">Samedi</div>
+                <div class="text-sm font-semibold text-red-400 py-2">Dimanche</div>
+            </div>
+
+            <!-- Days Grid -->
+            <div id="calendar-grid" class="grid grid-cols-7 gap-2 auto-rows-fr pb-10">
+                <!-- Days injected by JS -->
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Modals -->
+    <!-- AI Modal -->
+    <div id="ai-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-95 opacity-0"
+            id="ai-modal-content">
+            <div
+                class="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex justify-between items-center text-white">
+                <h3 class="font-bold flex items-center gap-2"><i class="fa-solid fa-robot"></i> Assistant Gemini</h3>
+                <button class="hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center"
+                    id="close-ai-modal">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <button
+                        class="w-full text-left p-4 border dark:border-slate-600 rounded-lg hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-slate-700 transition-all group"
+                        id="btn-ai-oof">
+                        <div
+                            class="font-bold text-slate-800 dark:text-slate-200 group-hover:text-brand-600 dark:group-hover:text-brand-400">
+                            Générer Message d'Absence</div>
+                        <div class="text-sm text-slate-500 dark:text-slate-400">Crée un email professionnel basé sur vos
+                            jours d'absence.</div>
+                    </button>
+                    <button
+                        class="w-full text-left p-4 border dark:border-slate-600 rounded-lg hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-slate-700 transition-all group"
+                        id="btn-ai-checklist">
+                        <div
+                            class="font-bold text-slate-800 dark:text-slate-200 group-hover:text-brand-600 dark:group-hover:text-brand-400">
+                            Checklist de Départ</div>
+                        <div class="text-sm text-slate-500 dark:text-slate-400">Liste des tâches à faire avant vos
+                            congés.</div>
+                    </button>
+                </div>
+                <div id="ai-result" class="mt-6 hidden">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Résultat</label>
+                    <textarea
+                        class="w-full p-3 bg-slate-50 dark:bg-slate-900 dark:text-slate-200 border dark:border-slate-600 rounded text-sm h-32 focus:ring-2 focus:ring-brand-500 outline-none"
+                        readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal"
+        class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="bg-slate-800 p-4 flex justify-between items-center text-white">
+                <h3 class="font-bold"><i class="fa-solid fa-cog"></i> Paramètres</h3>
+                <button class="hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center"
+                    id="close-settings-modal">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Clé API Google
+                        Gemini</label>
+                    <input type="password" id="api-key-input"
+                        class="w-full border dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded p-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none"
+                        placeholder="AIzaSy...">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Nécessaire pour les fonctionnalités IA.
+                    </p>
+                </div>
+                <button id="btn-save-settings"
+                    class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2 rounded transition-colors">
+                    Sauvegarder
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modules -->
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
