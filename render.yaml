@@ -1,5 +1,4 @@
 services:
-  # Server Service (Node.js)
   - type: web
     name: planning-dashboard-server
     env: node
@@ -7,7 +6,3 @@ services:
     plan: free
     buildCommand: npm install
     startCommand: npm start
-    envVars:
-      - key: NODE_VERSION
-        value: 18.16.0
-    autoDeploy: false
