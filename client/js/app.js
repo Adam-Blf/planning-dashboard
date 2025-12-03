@@ -205,12 +205,8 @@ class App {
 
     async triggerAI(type) {
         const apiKey = this.state.getApiKey();
-        if (!apiKey) {
-            Toast.show('Veuillez configurer votre clé API Gemini', 'error');
-            this.closeModal('ai-modal');
-            this.openModal('settings-modal');
-            return;
-        }
+        // Note: We allow apiKey to be empty now, because we might use the server proxy.
+        // The GeminiService will handle the fallback.
 
         const resultArea = document.getElementById('ai-result');
         const textarea = resultArea.querySelector('textarea');
