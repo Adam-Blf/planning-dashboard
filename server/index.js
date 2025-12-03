@@ -8,8 +8,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the client directory
-app.use(express.static(path.join(__dirname, '../client')));
+// Serve static files from the client directory with caching (1 day)
+app.use(express.static(path.join(__dirname, '../client'), {
+    maxAge: '1d'
+}));
 
 // Proxy Endpoint for Gemini (Render Env Var)
 app.post('/api/generate', async (req, res) => {
