@@ -31,7 +31,7 @@ export class State {
     }
 
     getApiKey() {
-        return localStorage.getItem(CONFIG.apiKeyStorage) || '';
+        return localStorage.getItem(CONFIG.apiKeyStorage) || CONFIG.DEFAULT_API_KEY || '';
     }
 
     setApiKey(key) {
